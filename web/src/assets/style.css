@@ -114,21 +114,20 @@ pre {
   border-top: 1px solid var(--bd-color);
   border-bottom: 1px solid var(--bd-color);
   width: 100%;
-  height: 7rem;
+  height: 3rem;
 
   position: absolute;
   top: calc(2.5rem - 1px);
+  padding-left: 0.3rem;
 }
 
 .menu-button {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  height: 2rem;
 }
 
 .menu-icon {
-  font-size: 1.8rem;
-  margin-top: 0.4rem;
+  font-size: 1rem;
 }
 
 .menu-group {
@@ -136,35 +135,24 @@ pre {
   margin: 0 0.5rem 0 0;
   padding: 0 0.5rem 0 0;
   border-right: 1px solid var(--bd-color);
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .menu-group:last-child {
   border-right: none;
 }
 
-.menu-group-box {
-  height: 5rem;
-  padding: 0.5rem 0;
-  display: flex;
-  border-bottom: 1px solid var(--bd-color);
-}
-
-.menu-group-title {
-  height: 2rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
 .main {
   display: flex;
   width: 100%;
-  /* 2.5 navi + 7 menu + 2 footer */
-  height: calc(100dvh - 11.5rem);
+  /* 2.5 navi + 3 menu + 2 footer */
+  height: calc(100dvh - 7.5rem);
   padding: 0.5rem;
 
   position: absolute;
-  top: 9.5rem;
+  top: 5.5rem;
 }
 
 .footer {

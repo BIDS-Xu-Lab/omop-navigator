@@ -27,58 +27,120 @@ function formatDate(date_string) {
     });
 }
 
+/* Main Menu */
+const main_menu = ref();
+const main_menu_items = ref([
+    {
+        label: 'File',
+        icon: 'pi pi-file',
+        items: [
+            {
+                label: 'New',
+                icon: 'pi pi-plus',
+                items: [
+                    {
+                        label: 'Document',
+                        icon: 'pi pi-file'
+                    },
+                    {
+                        label: 'Image',
+                        icon: 'pi pi-image'
+                    },
+                    {
+                        label: 'Video',
+                        icon: 'pi pi-video'
+                    }
+                ]
+            },
+            {
+                label: 'Open',
+                icon: 'pi pi-folder-open'
+            },
+            {
+                label: 'Print',
+                icon: 'pi pi-print'
+            }
+        ]
+    },
+    {
+        label: 'Edit',
+        icon: 'pi pi-file-edit',
+        items: [
+            {
+                label: 'Copy',
+                icon: 'pi pi-copy'
+            },
+            {
+                label: 'Delete',
+                icon: 'pi pi-times'
+            }
+        ]
+    },
+    {
+        label: 'Search',
+        icon: 'pi pi-search'
+    },
+    {
+        separator: true
+    },
+    {
+        label: 'Share',
+        icon: 'pi pi-share-alt',
+        items: [
+            {
+                label: 'Slack',
+                icon: 'pi pi-slack'
+            },
+            {
+                label: 'Whatsapp',
+                icon: 'pi pi-whatsapp'
+            }
+        ]
+    }
+]);
+
+const toggleMainMenu = (event) => {
+    main_menu.value.toggle(event);
+};
 </script>
 
 <template>
 <NaviMenu />
 
 <div class="menu">
-    <div class="menu-group">
-        <div class="menu-group-box">
-            <p class="px-2"
-                style="width: 20rem; line-height: 1.3rem;">
-                Click the chat title to view the conversation. All conversations are saved for future reference.
-            </p>
-        </div>
-        <div class="menu-group-title">
-            About
-        </div>
-    </div>
+  <div class="menu-group">
+    <Button text
+      type="button" 
+      size="small"
+      @click="toggleMainMenu" 
+      aria-haspopup="true" 
+      aria-controls="overlay_menu">
+      <font-awesome-icon icon="fa-solid fa-bars" />
+    </Button>
+    <TieredMenu ref="main_menu" id="overlay_menu" 
+      :model="main_menu_items" :popup="true" />
+  </div>
 
-    <div class="menu-group">
-        <div class="menu-group-box">
-            <Button text
-                class="menu-button"
-                v-tooltip.bottom="'Start a new chat.'"
-                @click="store.doSomething()">
-                <font-awesome-icon icon="far fa-comments" class="menu-icon" />
-                <span>
-                    New Question
-                </span>
-            </Button>
-        </div>
-        <div class="menu-group-title">
-            Question
-        </div>
-    </div>
+  <div class="menu-group">
+    <Button text
+        class="menu-button"
+        v-tooltip.bottom="'Start a new chat.'"
+        @click="store.doSomething()">
+        <font-awesome-icon icon="far fa-comments" class="menu-icon" />
+        <span>
+            New Question
+        </span>
+    </Button>
+  </div>
 
-    <div class="menu-group">
-        <div class="menu-group-box">
-
-            <Button text
-                class="menu-button"
-                v-tooltip.bottom="'Show the detailed user manual in a new window.'"
-                @click="data_store.showGuide()">
-                <font-awesome-icon icon="fa-solid fa-book" class="menu-icon" />
-                <span>
-                    How-to Guide
-                </span>
-            </Button>
-        </div>
-        <div class="menu-group-title">
-            Help
-        </div>
-    </div>
+  <div class="menu-group">
+    <Button text
+        class="menu-button"
+        v-tooltip.bottom="'Show the detailed user manual in a new window.'"
+        @click="data_store.showGuide()">
+        <font-awesome-icon icon="fa-solid fa-book" class="menu-icon" />
+    </Button>
+  </div>
 </div>
 
 
@@ -113,7 +175,7 @@ function formatDate(date_string) {
 </template>
 
 <div class="w-full flex flex-col"
-    :style="{ height: 'calc(100svh - 17.5rem)' }">
+    :style="{ height: 'calc(100svh - 13.5rem)' }">
 
     <div class="flex-1 overflow-y-auto"
       style="width: calc(100% + 1rem);">
@@ -159,7 +221,7 @@ function formatDate(date_string) {
 </template>
 
 <div class="w-full flex flex-col"
-    :style="{ height: 'calc(100svh - 17.5rem)' }">
+    :style="{ height: 'calc(100svh - 13.5rem)' }">
 
     <div class="flex-1 overflow-y-auto"
       style="width: calc(100% + 1rem);">

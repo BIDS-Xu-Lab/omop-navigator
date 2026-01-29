@@ -17,7 +17,7 @@ onMounted(() => {
             Home
         </div> -->
 
-        <div class="navi-item" 
+        <div class="navi-item ml-1" 
             v-tooltip.bottom="'Use the navigator to explore the OMOP CDM data.'"
             @click="store.gotoView('navigator')" 
             :class="{ 'active-page': store.current_view == 'navigator' }">
