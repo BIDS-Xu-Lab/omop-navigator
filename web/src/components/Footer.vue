@@ -9,13 +9,17 @@ onMounted(() => {
 
 <template>
 <div class="footer">
-<div class="footer-left flex flex-row items-center">
+<div class="footer-left flex flex-row items-center gap-4">
 
-<div>
-    <font-awesome-icon icon="fa-solid fa-ear-listen" />
-    {{ store.app_config.system.name }} 
-    {{ store.version }}
-</div>
+    <div>
+        <font-awesome-icon icon="fa-solid fa-database" />
+        X Tables
+    </div>
+
+    <div>
+        <font-awesome-icon icon="fa-solid fa-cogs" />
+        Model: gpt-5-mini
+    </div>
 
 </div>
 
@@ -37,3 +41,9 @@ onMounted(() => {
 
 
 </template>
+
+<style scoped>
+.footer {
+    font-size: 0.9rem;
+}
+</style>
