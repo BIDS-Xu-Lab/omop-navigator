@@ -123,6 +123,7 @@ function stripKnownExtensions(fileName) {
   base = base.replace(/\.(csv|txt)$/i, '');
   base = base.replace(/\.(gz|gzip|bz2|zst)$/i, '');
   base = base.replace(/\.(csv|txt)$/i, '');
+  base = base.replace(/^cdm_/i, '');
   return base;
 }
 
