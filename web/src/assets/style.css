@@ -11,7 +11,7 @@
 
   color: #111111;
   background-color: #ffffff;
-  
+
   --link-color: #08488d;
   --link-hover-color: #1b72c4;
   --bg-color-menu: #f5f6f7;
@@ -20,7 +20,7 @@
   --bg-hover-color: #dddddd;
   --bg-active-color: #d2d2d2;
   --text-color-secondary: #6b7280;
-  
+
   --bd-color: #dadbdc;
 
   --bg-message-user-color: #f8fafc;
@@ -47,12 +47,11 @@
     --bd-color: #444444;
 
     --bg-message-user-color: #161616;
-    
+
     --bg-code-result-color: #032917;
     --bg-code-error-color: #2e0101;
   }
 }
-
 
 html {
   margin: 0;
@@ -85,8 +84,8 @@ a:hover {
 
 pre {
   white-space: pre-wrap;
-  word-wrap: break-word; /* Deprecated, but good for older IE support */
-  overflow-wrap: break-word; /* Standard property for breaking long words */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 #app {
@@ -98,7 +97,6 @@ pre {
   overscroll-behavior: none;
 }
 
-/* global styles */
 .markdown-body {
   background-color: transparent;
 }
@@ -131,7 +129,7 @@ pre {
 }
 
 .menu-group {
-  height: calc(100% - 2px); /* 2px border for top and bottom */
+  height: calc(100% - 2px);
   margin: 0 0.5rem 0 0;
   padding: 0 0.5rem 0 0;
   border-right: 1px solid var(--bd-color);
@@ -147,7 +145,6 @@ pre {
 .main {
   display: flex;
   width: 100%;
-  /* 2.5 navi + 3 menu + 2 footer */
   height: calc(100dvh - 7.5rem);
   padding: 0.5rem;
 
@@ -170,9 +167,9 @@ pre {
 }
 
 .prevent-select {
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .btn-like-text {

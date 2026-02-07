@@ -1,100 +1,79 @@
-/**
- * This file defines the setting store for the system
- */
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia';
 
-export const useSettingStore = defineStore("setting", {
-    state: () => ({
+const SETTINGS_KEY = 'omop_navigator_settings_v1';
 
-        // for ui status
-        show_setting_panel: false,
+const DEFAULT_OMOP_SYSTEM_PROMPT = `You are an OMOP CDM analytics assistant running SQL in DuckDB against an attached SQLite OMOP database.
 
-        config: {
-            keywords: [],
-            backend: {
-                endpoint: import.meta.env.VITE_BACKEND_ENDPOINT || 'http://localhost:8333',
-                token: '',
-            },
+Rules:
+1. Produce SQL that works in DuckDB.
+2. OMOP schema is attached as database alias: omop.
+3. Prefer explicit columns over SELECT *.
+4. Keep queries safe and read-only.
+5. Use LIMIT for exploratory queries.
+6. When uncertain about table/column names, first query DuckDB metadata.
+
+You must respond with JSON only:
+{
+  "assistant_response": "short plain-language answer",
+  "sql_cells": [
+    {
+      "title": "short title",
+      "sql": "SQL statement"
+    }
+  ]
+}`;
+
+export const useSettingStore = defineStore('setting', {
+  state: () => ({
+    show_setting_panel: false,
+    config: {
+      openaiApiKey: '',
+      openaiModel: 'gpt-4.1-mini',
+      maxResultRows: 200,
+      autoRunSqlCells: true,
+      omopSystemPrompt: DEFAULT_OMOP_SYSTEM_PROMPT,
+    },
+  }),
+
+  actions: {
+    loadSettingsFromLocalStorage() {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      if (!raw) return;
+
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          this.config = {
+            ...this.config,
+            ...parsed,
+          };
         }
-    }),
-
-    getters: {
+      } catch (error) {
+        console.error('Failed to parse saved settings:', error);
+      }
     },
 
-    actions: {
-        updateSettingsByJSON: function (json) {
-            // copy the items from json to store.config
-            for (let key in this.config) {
-                if (json.hasOwnProperty(key)) {
-                    // special rule for ai models
-                    if (key == 'ai_models') {
-                        // for this case, search all settings from the json
-                        for (let model_id in json[key]) {
-                            if (this.config[key].hasOwnProperty(model_id)) {
-                                for (let model_attribute in json[key][model_id]) {
-                                    this.config[key][model_id][model_attribute] = json[key][model_id][model_attribute];
-                                }
-                            } else {
-                                // just copy the whole content if not found
-                                // which means the localStorage has custmoized settings
-                                this.config[key][model_id] = json[key][model_id];
-                            }
-                        }
-                    } else {
-                        this.config[key] = json[key];
-                    }
-                }
-            }
-        },
-
-        hasKeywordInSettings: function (keyword) {
-            for (let kw of this.config.keywords) {
-                if (typeof kw === 'string') {
-                    if (kw == keyword) {
-                        return true;
-                    }
-                } else if (kw.token == keyword) {
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        removeKeywordFromSettings: function (index) {
-            this.config.keywords.splice(index, 1);
-        },
-
-        saveSettingsToLocalStorage: function () {
-            localStorage.setItem(
-                "config",
-                JSON.stringify(this.config)
-            );
-            console.log('* saved config to local storage');
-        },
-
-        loadSettingsFromLocalStorage: function () {
-            // just load the object from localstorage
-            let x = localStorage.getItem('config');
-
-            if (x == null) {
-                console.log('* not found config from local');
-                return;
-            }
-
-            // parse
-            let cfg = JSON.parse(x);
-            console.log('* local storage config:', cfg);
-
-            this.updateSettingsByJSON(cfg);
-
-            console.log('* loaded config from local storage');
-        },
-
-        clearSettingsFromLocalStorage: function () {
-            localStorage.removeItem('config');
-
-            // reload the page
-            window.location.reload();
-        },
+    saveSettingsToLocalStorage() {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(this.config));
     },
+
+    clearSettingsFromLocalStorage() {
+      localStorage.removeItem(SETTINGS_KEY);
+      this.config = {
+        openaiApiKey: '',
+        openaiModel: 'gpt-4.1-mini',
+        maxResultRows: 200,
+        autoRunSqlCells: true,
+        omopSystemPrompt: DEFAULT_OMOP_SYSTEM_PROMPT,
+      };
+    },
+
+    updateConfig(patch) {
+      this.config = {
+        ...this.config,
+        ...patch,
+      };
+      this.saveSettingsToLocalStorage();
+    },
+  },
 });
