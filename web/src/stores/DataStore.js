@@ -152,7 +152,7 @@ export const useDataStore = defineStore('data', {
         const contextCell = {
           id: uid(),
           title: `Attached SQLite DB: ${file.name}`,
-          sql: "SELECT table_name FROM information_schema.tables WHERE table_catalog = 'omop' ORDER BY table_name LIMIT 200;",
+          sql: "SHOW TABLES FROM omop;",
           createdAt: nowIso(),
           status: 'completed',
           columns: [],
@@ -175,6 +175,63 @@ export const useDataStore = defineStore('data', {
 
         if (this.activeConversation) {
           this.activeConversation.cells.unshift(contextCell);
+          this.activeConversation.updatedAt = nowIso();
+          await this.persistActiveConversation();
+        }
+      } catch (error) {
+        this.dbReady = false;
+        this.dbFileName = '';
+        this.dbError = String(error?.message || error);
+      }
+    },
+
+    async attachParquetFiles(files) {
+      const selected = Array.from(files || []).filter(Boolean);
+      if (selected.length === 0) return;
+
+      this.dbError = '';
+      try {
+        const mappings = await duckdbService.attachParquetFiles(selected);
+        this.dbReady = true;
+        this.dbFileName = `${selected.length} parquet files`;
+
+        const contextCell = {
+          id: uid(),
+          title: `Loaded Parquet Files (${selected.length})`,
+          sql: "SHOW TABLES FROM omop;",
+          createdAt: nowIso(),
+          status: 'completed',
+          columns: [],
+          rows: [],
+          rowCount: 0,
+          truncated: false,
+          error: '',
+        };
+
+        try {
+          const tableResult = await duckdbService.listOmopTables(500);
+          contextCell.columns = tableResult.columns;
+          contextCell.rows = tableResult.rows;
+          contextCell.rowCount = tableResult.rowCount;
+          contextCell.truncated = tableResult.truncated;
+        } catch (error) {
+          contextCell.status = 'failed';
+          contextCell.error = String(error?.message || error);
+        }
+
+        if (this.activeConversation) {
+          this.activeConversation.cells.unshift(contextCell);
+          this.activeConversation.updatedAt = nowIso();
+          await this.persistActiveConversation();
+        }
+
+        if (mappings.length > 0 && this.activeConversation) {
+          this.activeConversation.messages.push({
+            id: uid(),
+            role: 'assistant',
+            content: `Loaded ${mappings.length} parquet files into schema omop. Example table: ${mappings[0].tableName}`,
+            createdAt: nowIso(),
+          });
           this.activeConversation.updatedAt = nowIso();
           await this.persistActiveConversation();
         }

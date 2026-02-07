@@ -47,7 +47,7 @@ const mainMenuItems = computed(() => [
         },
       },
       {
-        label: 'Load OMOP SQLite File',
+        label: 'Load Data Files',
         icon: 'pi pi-upload',
         command: () => {
           dbFileInput.value?.click();
@@ -112,10 +112,19 @@ function saveSettings() {
 }
 
 async function onDbFileChanged(event) {
-  const file = event?.target?.files?.[0];
-  if (!file) return;
+  const files = Array.from(event?.target?.files || []);
+  if (files.length === 0) return;
 
-  await dataStore.attachSqliteFile(file);
+  const lowerNames = files.map((f) => String(f.name || '').toLowerCase());
+  const allParquet = lowerNames.every((name) => name.endsWith('.parquet'));
+
+  if (allParquet) {
+    await dataStore.attachParquetFiles(files);
+  } else if (files.length === 1) {
+    await dataStore.attachSqliteFile(files[0]);
+  } else {
+    dataStore.dbError = 'Please select either one SQLite file, or multiple .parquet files.';
+  }
   event.target.value = '';
 }
 
@@ -159,9 +168,9 @@ function runQueuedCell(cell) {
     </div>
 
     <div class="menu-group">
-      <Button text class="menu-button" v-tooltip.bottom="'Load local OMOP sqlite database file.'" @click="dbFileInput?.click()">
+      <Button text class="menu-button" v-tooltip.bottom="'Load one SQLite file, or multiple parquet files.'" @click="dbFileInput?.click()">
         <font-awesome-icon icon="fa-solid fa-database" class="menu-icon" />
-        <span>Load OMOP DB</span>
+        <span>Load Data</span>
       </Button>
     </div>
 
@@ -194,7 +203,8 @@ function runQueuedCell(cell) {
   <input
     ref="dbFileInput"
     type="file"
-    accept=".db,.sqlite,.sqlite3"
+    accept=".db,.sqlite,.sqlite3,.parquet"
+    multiple
     class="hidden"
     @change="onDbFileChanged"
   />
